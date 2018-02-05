@@ -1,0 +1,19 @@
+.slidebar-container{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 100%;
+  background: #ddd;
+  padding: 20px;
+  box-sizing: border-box;
+  >label{
+    line-height: 50px;
+  }
+  .slidebar{
+    >li{
+      list-style-type: none;
+      line-height: 50px;
+    }
+  }
+}

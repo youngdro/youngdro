@@ -1,0 +1,66 @@
+{
+  "name": "react-next",
+  "version": "1.0.0",
+  "description": "next",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "next build",
+    "start": "NODE_ENV=production pm2 start server.js",
+    "stop": "pm2 stop server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hyy1115/react-next.git"
+  },
+  "keywords": [
+    "react",
+    "next"
+  ],
+  "author": "hyy",
+  "license": "MIT",
+  "dependencies": {
+    "@tweenjs/tween.js": "^17.2.0",
+    "autoprefixer": "^7.1.5",
+    "axios": "^0.16.2",
+    "babel-plugin-module-resolver": "^2.7.1",
+    "babel-plugin-wrap-in-js": "^1.1.1",
+    "compression": "^1.7.1",
+    "dat.gui": "^0.7.0",
+    "express": "^4.16.2",
+    "file-loader": "^1.1.5",
+    "glob": "^7.1.2",
+    "isomorphic-unfetch": "^2.0.0",
+    "lru-cache": "^4.1.1",
+    "material-ui": "^0.20.0",
+    "material-ui-icons": "^1.0.0-beta.17",
+    "module-alias": "^2.0.1",
+    "next": "latest",
+    "next-redux-wrapper": "^1.3.4",
+    "next-routes": "^1.1.0",
+    "normalize.css": "^7.0.0",
+    "path": "^0.12.7",
+    "pm2": "^2.7.1",
+    "postcss-easy-import": "^3.0.0",
+    "postcss-loader": "^2.0.8",
+    "raw-loader": "^0.5.1",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "react-redux": "^5.0.6",
+    "redux": "^3.7.2",
+    "redux-devtools-extension": "^2.13.2",
+    "redux-thunk": "^2.2.0",
+    "sass-loader": "^6.0.6",
+    "styled-jsx": "^2.1.1",
+    "styled-jsx-plugin-postcss": "^0.1.0",
+    "styled-jsx-plugin-sass": "^0.1.0",
+    "three": "^0.89.0",
+    "three-orbitcontrols": "^2.0.0"
+  },
+  "devDependencies": {
+    "babel-plugin-css-modules-transform": "^1.2.7",
+    "node-sass": "^4.5.3",
+    "postcss": "^6.0.13",
+    "postcss-cssnext": "^3.0.2"
+  }
+}

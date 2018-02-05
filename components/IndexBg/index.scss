@@ -1,0 +1,60 @@
+.main_index-container {
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: calc(100% - 0px);
+	height: 100%;
+	background-image: linear-gradient( 0deg, #c0a286 20%, #316d6e 80%);
+	overflow: hidden;
+	.mountain{
+		position: absolute;
+		bottom: 0;
+		width:26.5%;
+	    background:#1b2135;
+	    overflow:hidden;
+	    // transition: 0.5s ease;
+	    box-shadow: rgba(0, 0, 0, 0.42) 0px 1px 6px, rgba(0, 0, 0, 0.42) 0px 1px 4px;
+	    &::after{
+		    content: '';
+		    display: block;
+		    padding-top:100%;
+		}
+		&.left-first{
+			left: 10%;
+			background:#1b2135;
+			transform:rotate(45deg) translateX(35%) translateY(36%);
+		}
+		&.left-second{
+			left: 10%;
+			background:#255257;
+			transform:rotate(45deg) translateX(65%) translateY(22%);
+		}
+		&.left-third{
+			left: 10%;
+			background:#747f6f;
+			transform:rotate(45deg) translateX(100%) translateY(12%);
+		}
+		&.right-first{
+			right: 10%;
+			background:#1b2135;
+			transform:rotate(45deg) translateX(36%) translateY(35%);
+		}
+		&.right-second{
+			right: 10%;
+			background:#255257;
+			transform:rotate(45deg) translateX(22%) translateY(65%);
+		}
+		&.right-third{
+			right: 10%;
+			background:#747f6f;
+			transform:rotate(45deg) translateX(12%) translateY(100%);
+		}
+	}
+	canvas{
+		position:absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+		width: 100%;
+	}
+}

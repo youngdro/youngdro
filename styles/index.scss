@@ -1,0 +1,166 @@
+@import 'normalize.css';
+@import '/static/font-awesome/css/font-awesome.css';
+$primary-color: black;
+$menu-width: 300px;
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background-color:rgba(93, 93, 93, 0.24);
+}
+::-webkit-scrollbar-thumb {
+  background-color:#b1b2b3;
+}
+@font-face {
+  font-family: 'Vevey';
+  src:url('/static/fonts/vevey.ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Haymaker';
+  src:url('/static/fonts/Haymaker.ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'FangZheng_yuesong';
+  src:url('/static/fonts/FangZheng_yuesong.TTF');
+  font-weight: normal;
+  font-style: normal;
+}
+p {
+  font-size: xx-large;
+  color: $primary-color;
+}
+* {
+  margin: 0;
+  padding: 0;
+}
+a {
+  text-decoration: none;
+}
+/*隐藏文本*/
+.textOverflow-hidden {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/*路由切换动画——改变透明度*/
+.normal-enter {
+  opacity: 0;
+  z-index: 10000;
+}
+
+.normal-enter.normal-enter-active {
+  opacity: 1;
+  transition: all 0.4s ease-in;
+}
+
+.normal-leave {
+  opacity: 1;
+}
+
+.normal-leave.normal-leave-active {
+  opacity: 0;
+  transition: all .4s ease-out;
+}
+
+/*路由切换动画——左移动*/
+.left-enter {
+  position: absolute;
+  top: 0;
+  background: #fff;
+  z-index: 10000;
+  opacity: 1;
+  transform: translateX(100%);
+}
+
+.left-enter.left-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: all 0.4s ease-out;
+}
+
+.left-leave {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.left-leave.left-leave-active {
+  opacity: 1;
+  transform: translateX(-100%);
+  transition: all 0.4s ease-out;
+}
+
+/*路由切换动画——右移动*/
+.right-enter {
+  transform: translateX(-100%);
+}
+
+.right-enter.right-enter-active {
+  transform: translateX(0);
+  transition: all 0.4s ease-out;
+}
+
+.right-leave {
+  position: absolute;
+  top: 0;
+  background: #fff;
+  z-index: 10000;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.right-leave.right-leave-active {
+  opacity: 1;
+  transform: translateX(100%);
+  transition: all 0.4s ease-out;
+}
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.absolute{
+  position: absolute;
+}
+.relative{
+  position:relative;
+}
+.line-clamp-2{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+/*适配设置*/
+@media screen and (min-width: 320px) {
+  html, body { font-size: 12px; }
+}
+@media screen and (min-width: 360px) {
+  html, body { font-size: 13.5px; }
+}
+@media screen and (min-width: 375px) {
+  html, body { font-size: 14px; }
+}
+@media screen and (min-width: 414px) {
+  html, body { font-size: 15.5px; }
+}
+
+@media only screen and (max-width: 1200px){ .main-title.title-adaption-font{ font-size: 150px; }}
+@media only screen and (max-width: 1100px){ .main-title.title-adaption-font{ font-size: 135px; }}
+@media only screen and (max-width: 1000px){ .main-title.title-adaption-font{ font-size: 120px; }}
+@media only screen and (max-width: 900px) { .main-title.title-adaption-font{ font-size: 105px; }}
+@media only screen and (max-width: 800px) { .main-title.title-adaption-font{ font-size: 90px; }}
+@media only screen and (max-width: 700px) { .main-title.title-adaption-font{ font-size: 75px; }}
+@media only screen and (max-width: 600px) { .main-title.title-adaption-font{ font-size: 60px; }}
+@media only screen and (max-width: 500px) { .main-title.title-adaption-font{ font-size: 45px; }}
+@media only screen and (max-width: 400px) { .main-title.title-adaption-font{ font-size: 40px; }}
+@media only screen and (max-width: 300px) { .main-title.title-adaption-font{ font-size: 40px; }}

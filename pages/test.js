@@ -6,9 +6,7 @@ import * as THREE from 'three';
 const Stats = require('three/examples/js/libs/stats.min.js');
 const OrbitControls = require('three-orbitcontrols');
 const TWEEN = require('@tweenjs/tween.js');
-// const ObjectLoader = require('three/src/loaders/ObjectLoader.js')
-// import ObjectLoader from 'three/src/loaders/ObjectLoader.js'
-// const ObjMtlLoader = require("obj-mtl-loader");
+
 class Test extends React.Component {
     clickHandle() {
         // alert(this.props.shows);
@@ -32,6 +30,7 @@ class Test extends React.Component {
                     position:absolute;
                     top:0;
                     left:0;
+                    overflow:hidden;
                     height:100%;
                     width:100%;
                 }
@@ -40,16 +39,16 @@ class Test extends React.Component {
         )
     }
 }
-var controls = new function () {
+var controls = new function() {
     // light
-  this.posX=50;
-  this.posY=50;
-  this.posZ=50;
-  // camera
-  // this.camera_posX=0;
-  // this.camera_posY=0;
-  // this.camera_posZ=200;
-  // this.camera_rotation=0;
+    this.posX = 50;
+    this.posY = 50;
+    this.posZ = 50;
+// camera
+// this.camera_posX=0;
+// this.camera_posY=0;
+// this.camera_posZ=200;
+// this.camera_rotation=0;
 };
 
 class ThreeD {
@@ -62,6 +61,7 @@ class ThreeD {
             brownDark: 0x23190f,
             blue: 0x68c3c0
         }
+        this.Event = {};
         this.container = canvasContainer || document.body;
         this.createScene();
         this.createLights();
@@ -69,20 +69,24 @@ class ThreeD {
         this.orbitControls = new OrbitControls(this.camera);
         this.orbitControls.autoRotate = true;
         // Stats
+        this.initStats();
+        this.initGUI();
+        this.draw();
+        this.loop();
+    }
+    initStats(){
         this.stats = new Stats();
         this.stats.domElement.style.position = 'absolute';
         this.stats.domElement.style.bottom = '0px';
         this.stats.domElement.style.zIndex = 100;
         this.container.appendChild(this.stats.domElement);
-        this.initGUI();
-        this.draw();
-        this.loop();
     }
-    initGUI(){
+    initGUI() {
+        var _this = this;
         var gui = new dat.GUI();
-        gui.add(controls,"posX",0,500);
-        gui.add(controls,"posY",0,500);
-        gui.add(controls,"posZ",0,500);
+        gui.add(controls, "posX", 0, 500);
+        gui.add(controls, "posY", 0, 500);
+        gui.add(controls, "posZ", 0, 500);
 
         // var cube_light = new THREE.BoxGeometry(5, 5, 5, 2, 2, 2);
         // var material = new THREE.PointsMaterial({
@@ -96,20 +100,42 @@ class ThreeD {
         // this.lightParticleSystem.position.z = controls.posZ;
         // this.scene.add(this.lightParticleSystem);
 
-        var sun_geom = new THREE.SphereGeometry( 5, 64, 64 );
+        var sun_geom = new THREE.SphereGeometry(5, 4, 4);
         var matTailPlane = new THREE.MeshPhongMaterial({
             color: this.Colors.red,
-            shading: THREE.FlatShading
+            shading: THREE.FlatShading,
+        // map:_this.getTexture()
         });
-        this.sun = new THREE.Mesh(sun_geom,matTailPlane);
+        this.sun = new THREE.Mesh(sun_geom, matTailPlane);
         this.sun.position.x = controls.posX;
         this.sun.position.y = controls.posY;
         this.sun.position.z = controls.posZ;
+        // console.log(this.sun)
         this.scene.add(this.sun)
-        // gui.add(controls,"camera_posX",-1000,1000);
-        // gui.add(controls,"camera_posY",-1000,1000);
-        // gui.add(controls,"camera_posZ",-1000,1000);
-        // gui.add(controls,"camera_rotation",-1000,1000);
+
+        this.sun.on("hover", function(e, self) {
+            self.material.color.setHex(0xdddddd);
+            var tween = new TWEEN.Tween(self.scale).to({
+                x: 1.2,
+                y: 1.2,
+                z: 1.2
+            }, 300).easing(TWEEN.Easing.Cubic.Out).start();
+        }, function(e, self) {
+            self.material.color.setHex(0xff0000);
+            var tween = new TWEEN.Tween(self.scale).to({
+                x: 1.0,
+                y: 1.0,
+                z: 1.0
+            }, 300).easing(TWEEN.Easing.Cubic.Out).start();
+        });
+    // this.sun.on("mouseup", function(e) {
+    //     // console.log(this)
+    //     e.material.color.setHex(0xff0000);
+    // })
+    // gui.add(controls,"camera_posX",-1000,1000);
+    // gui.add(controls,"camera_posY",-1000,1000);
+    // gui.add(controls,"camera_posZ",-1000,1000);
+    // gui.add(controls,"camera_rotation",-1000,1000);
     }
     draw() {
         var _this = this;
@@ -124,54 +150,67 @@ class ThreeD {
         m_cube.position.z = 20;
         m_cube.castShadow = true;
         this.scene.add(m_cube);
-
-        var object = this.loadObjMtl("monu9");
-        object.then((obj)=>{
-            for(var i in obj.children){
+        m_cube.on("mousedown", function(e,self){
+            var tween = new TWEEN.Tween(self.position).to({
+                y: 22
+            }, 300).easing(TWEEN.Easing.Cubic.Out).start();
+        },function(e,self){
+            var tween = new TWEEN.Tween(self.position).to({
+                y: 12
+            }, 300).easing(TWEEN.Easing.Cubic.Out).start();
+        })
+        this.loadObjMtl("monu9").then((obj) => {
+            for (var i in obj.children) {
                 obj.children[i].castShadow = true;
                 obj.children[i].receiveShadow = true;
-                // obj.children[i].position.x = obj.children[i].position.x+Math.random()*4-2;
-
+                obj.children[i].on("mousedown", function(e, self){
+                    var tween = new TWEEN.Tween(self.position).to({
+                        z: -10
+                    }, 300).easing(TWEEN.Easing.Cubic.Out).start();
+                }, function(e, self){
+                    var tween = new TWEEN.Tween(self.position).to({
+                        z: 0
+                    }, 300).easing(TWEEN.Easing.Cubic.Out).start();
+                })
             }
-            console.log( obj.children)
-            _this.scene.add(obj)
+            _this.scene.add(obj);
         })
-
+        // this.createText()
         // var tween = new TWEEN.Tween(particleSystem.position).to({
         //     x: 40,
         //     y: 20
         // }, 1000).easing(TWEEN.Easing.Cubic.Out);
 
     }
-    loadMtl(mtlName, mtlPath='/static/obj/'){
-        return new Promise((resolve,reject)=>{
+    loadMtl(mtlName, mtlPath = '/static/obj/') {
+        return new Promise((resolve, reject) => {
             const mtlLoader = new THREE.MTLLoader();
             mtlLoader.setBaseUrl(mtlPath);
             mtlLoader.setPath(mtlPath);
-            mtlLoader.load(mtlName+'.mtl',resolve);
+            mtlLoader.load(mtlName + '.mtl', resolve);
         })
     }
-    loadObj(objName,objPath='/static/obj/',materials){
-        return new Promise((resolve,reject)=>{
+    loadObj(objName, objPath = '/static/obj/', materials) {
+        return new Promise((resolve, reject) => {
             materials.preload();
             var objLoader = new THREE.OBJLoader();
             objLoader.setMaterials(materials);
             objLoader.setPath(objPath);
-            objLoader.load(objName+'.obj',resolve,undefined,reject);
+            objLoader.load(objName + '.obj', resolve, undefined, reject);
         })
     }
-    async loadObjMtl(objMtlName, path = '/static/obj/'){
+    async loadObjMtl(objMtlName, path = '/static/obj/') {
         // var onProgress = function(xhr) {
         //     if (xhr.lengthComputable) {
         //         var percentComplete = xhr.loaded / xhr.total * 100;
         //     }
         // };
         // var onError = function(xhr) {};
-        try{
+        try {
             var mtl = await this.loadMtl(objMtlName);
-            var obj = await this.loadObj(objMtlName,path,mtl);
+            var obj = await this.loadObj(objMtlName, path, mtl);
             return obj;
-        }catch(err){
+        } catch ( err ) {
             console.log(err);
         }
 
@@ -194,6 +233,35 @@ class ThreeD {
         //     }, onProgress, onError);
         // });
 
+    }
+    // 绘制3D文字
+    createText() {
+        var _this = this;
+        var text = new THREE.FontLoader().load('/static/fonts/gentilis_regular.typeface.json', function(text) {
+            var gem = new THREE.TextGeometry('castle', {
+                size: 20, //字号大小，一般为大写字母的高度
+                height: 10, //文字的厚度
+                weight: 'normal', //值为'normal'或'bold'，表示是否加粗
+                font: text, //字体，默认是'helvetiker'，需对应引用的字体文件
+                style: 'normal', //值为'normal'或'italics'，表示是否斜体
+                bevelThickness: 1, //倒角厚度
+                bevelSize: 1, //倒角宽度
+                curveSegments: 30, //弧线分段数，使得文字的曲线更加光滑
+                bevelEnabled: true, //布尔值，是否使用倒角，意为在边缘处斜切
+            });
+            gem.center();
+            var mat = new THREE.MeshPhongMaterial({
+                color: 0xffe502,
+                specular: 0x009900,
+                shininess: 30,
+                shading: THREE.FlatShading
+            });
+            var textObj = new THREE.Mesh(gem, mat);
+            textObj.position.z = 50;
+            textObj.position.y = 50;
+            textObj.castShadow = true;
+            _this.scene.add(textObj);
+        });
     }
     getTexture(canvasSize = 300) {
         var canvas = document.createElement('canvas');
@@ -224,6 +292,7 @@ class ThreeD {
         return texture;
     }
     createScene() {
+        var _this = this;
         this.HEIGHT = window.innerHeight;
         this.WIDTH = window.innerWidth;
         // 创建场景
@@ -276,9 +345,48 @@ class ThreeD {
         // this.container = this.canvasContainer || document.body;
         // container = document.body;
         this.container.appendChild(this.renderer.domElement);
-
         // 监听屏幕，缩放屏幕更新相机和渲染器的尺寸
         window.addEventListener('resize', this.handleWindowResize.bind(this), false);
+        // 为3D物体添加鼠标事件
+        THREE.Object3D.prototype.on = function(eventName, touchCallback, notTouchCallback) {
+            switch (eventName) {
+            // 自定义hover事件
+            case "hover":
+                _this.container.addEventListener("mousemove", (event) => {
+                    _this.handleRaycaster(event, this, (_event, _target) => {
+                        this.enter = true;
+                        if (this.enter != this.lastEnter && this.enter == true) {
+                            touchCallback && touchCallback(_event, _target);
+                            this.lastEnter = true;
+                        }
+                    }, (_event, _target) => {
+                        this.enter = false;
+                        if (this.enter != this.lastEnter && this.enter == false) {
+                            notTouchCallback && notTouchCallback(_event, _target);
+                            this.lastEnter = false;
+                        }
+                    });
+                }, false);
+                break;
+            default:
+                _this.container.addEventListener(eventName, (event) => {
+                    _this.handleRaycaster(event, this, touchCallback, notTouchCallback);
+                }, false);
+            }
+        }
+    }
+    handleRaycaster(event, target, touchCallback, notTouchCallback) {
+        var mouse = new THREE.Vector2();
+        var raycaster = new THREE.Raycaster();
+        mouse.x = (event.clientX / this.renderer.domElement.clientWidth) * 2 - 1;
+        mouse.y = -(event.clientY / this.renderer.domElement.clientHeight) * 2 + 1;
+        raycaster.setFromCamera(mouse, this.camera);
+        var intersects = raycaster.intersectObject(target);
+        if (intersects.length > 0) {
+            touchCallback && touchCallback(event, target);
+        } else {
+            notTouchCallback && notTouchCallback(event, target);
+        }
     }
     handleWindowResize() {
         // 更新渲染器的高度和宽度以及相机的纵横比
@@ -334,8 +442,8 @@ class ThreeD {
 
         // this.camera.position.set(controls.camera_posX, controls.camera_posY, controls.camera_posZ);
         // this.camera.rotation.x = controls.camera_rotation;
-        this.shadowLight.position.set(controls.posX,controls.posY,controls.posZ);
-        this.sun.position.set(controls.posX,controls.posY,controls.posZ);
+        this.shadowLight.position.set(controls.posX, controls.posY, controls.posZ);
+        this.sun.position.set(controls.posX, controls.posY, controls.posZ);
 
         // 重新调用 render() 函数
         requestAnimationFrame(this.loop.bind(this));

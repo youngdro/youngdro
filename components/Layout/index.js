@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import layoutStyle from 'styles/index.scss'
 
-export default ({ children, title = 'This is the default title' }) => (
+export default ({children, title = 'This is the default title' }) => (
     <div>
         <Head>
             <title>{ title }</title>
@@ -25,7 +25,7 @@ export default ({ children, title = 'This is the default title' }) => (
                 width: 100%;
                 position: absolute;
                 height:100%;
-                //overflow:auto;
+                overflow:auto;
                 //background-color:#f0edf1;
                 background-color:#f4f7f7;
             }

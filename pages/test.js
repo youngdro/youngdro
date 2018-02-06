@@ -18,6 +18,7 @@ class Test extends React.Component {
         // console.dir(dat)
         const OBJLoader = require('/utils/OBJLoader.js')
         const MTLLoader = require('/utils/MTLLoader.js')
+        const FirstPersonControls = require('/utils/FirstPersonControls.js')
         const threeD = new ThreeD(document.getElementById("world"));
     }
     render(props) {
@@ -65,13 +66,14 @@ class ThreeD {
         this.container = canvasContainer || document.body;
         this.createScene();
         this.createLights();
-        // OrbitControls
-        this.orbitControls = new OrbitControls(this.camera);
-        this.orbitControls.autoRotate = true;
+        
         // Stats
         this.initStats();
         this.initGUI();
         this.draw();
+        // OrbitControls
+        this.orbitControls = new OrbitControls(this.camera);
+        this.orbitControls.autoRotate = true;
         this.loop();
     }
     initStats(){
@@ -87,7 +89,6 @@ class ThreeD {
         gui.add(controls, "posX", 0, 500);
         gui.add(controls, "posY", 0, 500);
         gui.add(controls, "posZ", 0, 500);
-
         // var cube_light = new THREE.BoxGeometry(5, 5, 5, 2, 2, 2);
         // var material = new THREE.PointsMaterial({
         //     size: 1,
@@ -99,6 +100,46 @@ class ThreeD {
         // this.lightParticleSystem.position.y = controls.posY;
         // this.lightParticleSystem.position.z = controls.posZ;
         // this.scene.add(this.lightParticleSystem);
+    }
+    draw() {
+        var _this = this;
+        var cube = new THREE.BoxGeometry(20, 20, 20, 3, 3, 3);
+
+        var mat = new THREE.MeshPhongMaterial({
+            color: this.Colors.white,
+            map: THREE.ImageUtils.loadTexture('/static/images/crate.jpg')
+        });
+        var m_cube = new THREE.Mesh(cube, mat);
+        m_cube.position.y = 12;
+        m_cube.position.z = 20;
+        m_cube.castShadow = true;
+        // this.scene.add(m_cube);
+        // m_cube.on("mousedown", function(e,self){
+        //     var tween = new TWEEN.Tween(self.position).to({
+        //         y: 22
+        //     }, 300).easing(TWEEN.Easing.Cubic.Out).start();
+        // },function(e,self){
+        //     var tween = new TWEEN.Tween(self.position).to({
+        //         y: 12
+        //     }, 300).easing(TWEEN.Easing.Cubic.Out).start();
+        // })
+        this.loadObjMtl("monu9").then((obj) => {
+            for (var i in obj.children) {
+                obj.children[i].castShadow = true;
+                obj.children[i].receiveShadow = true;
+                // obj.children[i].on("mousedown", function(e, self){
+                //     var tween = new TWEEN.Tween(self.position).to({
+                //         z: -20
+                //     }, 300).easing(TWEEN.Easing.Cubic.Out).start();
+                // }, function(e, self){
+                //     var tween = new TWEEN.Tween(self.position).to({
+                //         z: -10
+                //     }, 300).easing(TWEEN.Easing.Cubic.Out).start();
+                // })
+            }
+            obj.position.z = -10;
+            _this.scene.add(obj);
+        })
 
         var sun_geom = new THREE.SphereGeometry(5, 4, 4);
         var matTailPlane = new THREE.MeshPhongMaterial({
@@ -128,59 +169,12 @@ class ThreeD {
                 z: 1.0
             }, 300).easing(TWEEN.Easing.Cubic.Out).start();
         });
-    // this.sun.on("mouseup", function(e) {
-    //     // console.log(this)
-    //     e.material.color.setHex(0xff0000);
-    // })
-    // gui.add(controls,"camera_posX",-1000,1000);
-    // gui.add(controls,"camera_posY",-1000,1000);
-    // gui.add(controls,"camera_posZ",-1000,1000);
-    // gui.add(controls,"camera_rotation",-1000,1000);
-    }
-    draw() {
-        var _this = this;
-        var cube = new THREE.BoxGeometry(20, 20, 20, 3, 3, 3);
-
-        var mat = new THREE.MeshPhongMaterial({
-            color: this.Colors.white,
-            map: THREE.ImageUtils.loadTexture('/static/images/crate.jpg')
-        });
-        var m_cube = new THREE.Mesh(cube, mat);
-        m_cube.position.y = 12;
-        m_cube.position.z = 20;
-        m_cube.castShadow = true;
-        this.scene.add(m_cube);
-        m_cube.on("mousedown", function(e,self){
-            var tween = new TWEEN.Tween(self.position).to({
-                y: 22
-            }, 300).easing(TWEEN.Easing.Cubic.Out).start();
-        },function(e,self){
-            var tween = new TWEEN.Tween(self.position).to({
-                y: 12
-            }, 300).easing(TWEEN.Easing.Cubic.Out).start();
-        })
-        this.loadObjMtl("monu9").then((obj) => {
-            for (var i in obj.children) {
-                obj.children[i].castShadow = true;
-                obj.children[i].receiveShadow = true;
-                obj.children[i].on("mousedown", function(e, self){
-                    var tween = new TWEEN.Tween(self.position).to({
-                        z: -10
-                    }, 300).easing(TWEEN.Easing.Cubic.Out).start();
-                }, function(e, self){
-                    var tween = new TWEEN.Tween(self.position).to({
-                        z: 0
-                    }, 300).easing(TWEEN.Easing.Cubic.Out).start();
-                })
-            }
-            _this.scene.add(obj);
-        })
         // this.createText()
         // var tween = new TWEEN.Tween(particleSystem.position).to({
         //     x: 40,
         //     y: 20
         // }, 1000).easing(TWEEN.Easing.Cubic.Out);
-
+        this.createCharacter("chr_sword");
     }
     loadMtl(mtlName, mtlPath = '/static/obj/') {
         return new Promise((resolve, reject) => {
@@ -300,6 +294,7 @@ class ThreeD {
         // 在场景中添加雾的效果；样式上使用和背景一样的颜色
         // this.scene.fog = new THREE.Fog(0xf7d9aa, 100, 950);
         this.scene.fog = new THREE.Fog(0x000000, 1, 600);
+        // this.scene.fog = new THREE.Fog(0xdddddd, 1, 600);
 
         // 创建相机
         let aspectRatio = this.WIDTH / this.HEIGHT;
@@ -325,6 +320,20 @@ class ThreeD {
         this.camera.position.z = 200;
         // camera.position.y = 100;
         this.camera.position.y = 0;
+        window.camera = this.camera;
+
+        // this.camControls = new THREE.FirstPersonControls(this.camera);
+        // this.camControls.lookSpeed = 0.4;
+        // this.camControls.movementSpeed = 20;
+        // this.camControls.noFly = true;
+        // this.camControls.lookVertical = true;
+        // this.scene.add(this.camControls.getObject())
+        // this.camControls.constrainVertical = true;
+        // this.camControls.verticalMin = 1.0;
+        // this.camControls.verticalMax = 2.0;
+        //下面两个属性定义场景初次渲染时相机指向的位置
+        // this.camControls.lon = -150;
+        // this.camControls.lat = 120
 
         // 创建渲染器
         this.renderer = new THREE.WebGLRenderer({
@@ -434,6 +443,52 @@ class ThreeD {
         this.scene.add(this.shadowLight);
         this.scene.add(this.ambientLight);
     }
+    createCharacter(name){
+        var _this = this;
+        this.loadObjMtl(name).then((obj) => {
+            for (var i in obj.children) {
+                obj.children[i].castShadow = true;
+                obj.children[i].receiveShadow = true;
+            }
+            this.character = obj;
+            obj.scale.set(0.5,0.5,0.5);
+            obj.position.y = 1;
+            this.scene.add(obj);
+            // this.camera.position.set(obj.position.x,obj.position.y+10,obj.position.z+26);
+            // this.camera.lookAt(obj.position);
+            var tween = new TWEEN.Tween(this.camera.position).to({
+                x: obj.position.x,
+                y: obj.position.y+10,
+                z: obj.position.z+26
+            }, 2000).easing(TWEEN.Easing.Cubic.Out).start();
+            document.onkeydown = this.handleKeyDown.bind(this)
+        })
+    }
+    updateCharacter(){
+        // this.camera.position.set(obj.position.x,obj.position.y+10,obj.position.z+26);
+    }
+    handleKeyDown(event){
+        // console.log(this.character)
+        // var _this = this;
+        switch(event.keyCode) {
+            case 87:
+                this.character.position.z -= 0.3;
+                break;
+            case 83:
+                this.character.position.z += 0.3;
+                break;
+            case 65:
+                this.character.position.x -= 0.3;
+                break;
+            case 68:
+                this.character.position.x += 0.3;
+                break;
+        }
+        // this.camera.position.set(new THREE.Vector3(this.character.x,this.character.y+10,this.character.z+26));
+        // this.camera.lookAt(this.character.position.clone());
+        console.log(event.keyCode)
+        // console.log(this.character.position)
+    }
     loop() {
         // 渲染场景
         this.renderer.render(this.scene, this.camera);
@@ -444,7 +499,7 @@ class ThreeD {
         // this.camera.rotation.x = controls.camera_rotation;
         this.shadowLight.position.set(controls.posX, controls.posY, controls.posZ);
         this.sun.position.set(controls.posX, controls.posY, controls.posZ);
-
+        // this.camControls.update(new THREE.Clock().getDelta());
         // 重新调用 render() 函数
         requestAnimationFrame(this.loop.bind(this));
     }

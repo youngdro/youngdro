@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Layout from '../components/Layout'
 import fetch from 'isomorphic-unfetch'
 import * as THREE from 'three';
+// import {JSONLoader}  from 'three';
 const Stats = require('three/examples/js/libs/stats.min.js');
 const OrbitControls = require('three-orbitcontrols');
 const TWEEN = require('@tweenjs/tween.js');
@@ -13,7 +14,7 @@ class Test extends React.Component {
     }
     componentDidMount() {
         console.log()
-        window.THREE = THREE;
+        window.THREE = THREE;   
         window.dat = require('dat.gui').default;
         // console.dir(dat)
         const OBJLoader = require('/utils/OBJLoader.js')
@@ -140,7 +141,29 @@ class ThreeD {
             obj.position.z = -10;
             _this.scene.add(obj);
         })
+        // console.log("-----------1------")
+        var pMaterial = new THREE.PointsMaterial({color:0xff0000,size:0.1});
+        // var particle = new THREE.geometry();
+        var jsonloader = new THREE.JSONLoader();
+        jsonloader.load('/static/obj/Suzanne.js', function(geometry, materials){
+            var mesh = new THREE.Mesh(geometry,materials);
+            _this.particleSystem = new THREE.Points(geometry, pMaterial);
+            _this.particleSystem.position.y = 30;
+            _this.particleSystem.position.z = 20;
+            _this.particleSystem.sortParticles = true;
+            _this.scene.add(_this.particleSystem);
+            _this.particleSystemLoaded = true;
 
+            // console.log(_this.particleSystem.needsUpdate=true)
+            console.log(_this.particleSystem.matrixAutoUpdate)
+            // _this.particleSystem.matrixAutoUpdate=true;
+
+        })
+        // console.log(jsonloader)
+        // (new THREE.JSONLoader()).load('/static/obj/Suzanne.js', function(geometry, materials){
+        //     console.log(geometry);
+        // });
+        // console.log("-----------2------")
         var sun_geom = new THREE.SphereGeometry(5, 4, 4);
         var matTailPlane = new THREE.MeshPhongMaterial({
             color: this.Colors.red,
@@ -188,6 +211,7 @@ class ThreeD {
         return new Promise((resolve, reject) => {
             materials.preload();
             var objLoader = new THREE.OBJLoader();
+            // var objLoader = new OBJLoader();
             objLoader.setMaterials(materials);
             objLoader.setPath(objPath);
             objLoader.load(objName + '.obj', resolve, undefined, reject);
@@ -499,6 +523,24 @@ class ThreeD {
         // this.camera.rotation.x = controls.camera_rotation;
         this.shadowLight.position.set(controls.posX, controls.posY, controls.posZ);
         this.sun.position.set(controls.posX, controls.posY, controls.posZ);
+        if(this.particleSystemLoaded){
+            // this.particleSystem.rotation.y+=0.1;
+            // var vertices = this.particleSystem.geometry.vertices;
+            // console.log(vertices.length)
+            this.particleSystem.geometry.vertices.forEach(function(vertice, i){
+                vertice.y = vertice.y+Math.random()*2-1;
+            })
+            // for(var i = 0; i < vertices.length; i++){
+            //     vertices[i].y = vertices[i].y+Math.random()*2-1;
+            // }
+            // vertices.forEach(function(vertice, i){
+            //     // vertice.position.x+=0.1;
+            //     // console.log(vertice)
+            //     vertice.y = vertice.y+Math.random()*0.2-0.1;
+            //     // vertice.set(vertice.x, vertice.y+Math.random()*0.2-0.1, vertice.z)
+            // })
+            // this.particleSystem.geometry.__dirtyVertices = true;
+        }
         // this.camControls.update(new THREE.Clock().getDelta());
         // 重新调用 render() 函数
         requestAnimationFrame(this.loop.bind(this));
